@@ -10,7 +10,12 @@ $stmt->bindParam(':id', $coupon_id);
 $stmt->execute();
 //If coupon found
 if($row = $stmt->fetch()){
-	
+	$currentDate = date('Y-m-d');
+	$coupon_exp = $row['date_exp'];
+	//Check to see if coupon is expired.
+	if($currentDate > $coupon_exp){
+		die_with_error("This coupon has expired.");
+	}
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
@@ -93,11 +98,11 @@ else {
                         <input type="checkbox" id="inputNewsletter" name="newsletter" value="Y"> Please send me valuable coupons, specials & updates by email.
                     </div><!-- form-group -->
                     <input type="hidden" name="coupon_id" value="<? echo $coupon_id; ?>">
-                    <button type="submit" class="btn btn-default">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div><!-- col-md-6 -->
 		</div><!-- row -->
-        <div class="row">
+        <div class="row" style="color:white;">
         	<br><br><br><br>
             <strong>Type: </strong> <? echo $coupon_type; ?><br>
             <strong>Product: </strong> <? echo $coupon_product; ?><br>

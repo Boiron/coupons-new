@@ -1,6 +1,10 @@
 <?
 require('inc/func.php');
 require('inc/generate_coupon.php');
+require('inc/classes/coupon.class.php');
+
+//MailChimp
+require_once 'inc/MCAPI.class.php';
 
 //Pull all values from POST
 $coupon_id = $_POST['coupon_id'];
@@ -21,6 +25,7 @@ if ($_POST['newsletter']){
 }
 
 //Find out coupon expiration date (15 days from now)
+$currentDate = date("F j, Y"); // current date
 $exp_date = strtotime(date("Y-m-d", strtotime($currentDate)) . " +15 days");
 //Create unique hash using coupon id and exp date
 $hash = md5($coupon_id . $exp_date);
@@ -34,6 +39,16 @@ $stmt->bindParam(':id', $coupon_id);
 $stmt->execute();
 //If coupon found
 if($row = $stmt->fetch()){
+	/*
+	$coupon = new Coupon($coupon_id, 
+		$row['type'], 
+		$row['product'], 
+		$row['desc'], 
+		$row['date_created'], 
+		$row['date_exp'], 
+		$row['png'], 
+		$row['upc']);
+	*/
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
@@ -62,8 +77,27 @@ if($row = $stmt->fetch()){
 else{
 	//Generate coupon PDF file
 	$coupon_url = generate_coupon($coupon_png, $coupon_product, $coupon_upc, $hash);
+	
 	//Email PDF
-	send_email($email, $coupon_url);
+	send_email($email, $coupon_url, $coupon_png);
+	
+	//Subscribe to Mailchimp list if they opted in
+	if($newsletter == '1'){
+		$apikey = 'd71aef15a5934aa73398f6a7332e1c93-us8'; 
+		$listId = 'c2e06c10bc'; 
+		$my_email = $email;
+		$double_optin = false; 
+		$send_welcome = false;  
+		$api = new MCAPI($apikey);  
+		$merge_vars = Array( 
+			'FNAME' => $first_name, 
+			'LNAME' => $last_name,
+			'MMERGE5' => $zip,
+			'MMERGE7' => $coupon_type,
+			'MMERGE16' => $coupon_desc
+		);
+		$retval = $api->listSubscribe( $listId, $my_email, $merge_vars, $double_optin, $send_welcome);
+	}
 		
 	//Store record in the DB
 	$stmt = $db->prepare("INSERT INTO `dev_coupons_downloaded` (`coupon_id`, `first_name`, `last_name`, `email`, `zip`, `products_tried`, `newsletter`, `ip_address`, `hash`, `coupon_url`) VALUES (:id, :first_name, :last_name, :email, :zip, :products_tried, :newsletter, :ip_address, :hash, :coupon_url)");
@@ -92,6 +126,8 @@ else{
 	"<strong>Newsletter: </strong>" . $newsletter . "<br>" .
 	"<strong>IP Address: </strong>" . $ip_address . "<br>" . 
 	"<strong>Unique Hash: </strong>" . $hash . "<br>";
+	//var_dump($coupon);
+	//echo $retval;
 	die_with_success($email, $debug);
 }
 ?>

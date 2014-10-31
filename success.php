@@ -17,10 +17,12 @@ $debug = $_GET['debug'];
     	<div class="jumbotron">
             <h1>Success!</h1>
             <p>Your coupon has been emailed to <? echo $email; ?></p>
-            <p><h4>Debug Info:</h4>
+            <p><button class="btn btn-primary btn-lg" href="#" role="button" onClick="window.history.back()">Go Back</button></p>
+        </div>
+        <div style="color:white;">
+        	<p><h4>Debug Info:</h4>
             	<? echo $debug; ?>
           	</p>
-            <p><button class="btn btn-primary btn-lg" href="#" role="button" onClick="window.history.back()">Go Back</button></p>
         </div>
 	</div>
 </div>

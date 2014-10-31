@@ -21,7 +21,7 @@ function die_with_success($email, $debug) {
     header('Location: success.php?email=' . $email . '&debug=' . $debug);
 }
 
-function send_email($email, $coupon_url){
+function send_email($email, $coupon_url, $img){
 	// Email From
 	$email_from = "coupons@boiron.com";
 	
@@ -33,9 +33,12 @@ function send_email($email, $coupon_url){
 	
 	// Email Message
 	// This is an HTML formatted message
-	$email_html_msg = "<h3>Click the link below to download your coupon:</h3>";
-	$email_html_msg .= '<a href="'. $coupon_url . '">' . $coupon_url . '</a>';
-	
+	//$email_html_msg = "<h3>Click the link below to download your coupon:</h3>";
+	//$email_html_msg .= '<a href="'. $coupon_url . '">' . $coupon_url . '</a>';
+	$small_img = "http://www.boironusa.com/coupon/png/" . $img;
+	$email_html_msg = file_get_contents('email_templates/calendula.html', true);
+	$email_html_msg = str_replace("*|COUPON-PDF|*", $coupon_url, $email_html_msg);
+	$email_html_msg = str_replace("*|COUPON-PNG|*", $small_img, $email_html_msg);
 	
 	// start setting up the email header
 	$headers = "From: ".$email_from;
