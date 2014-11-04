@@ -8,3 +8,16 @@ h3 {
 .form-control-feedback {
 	right: 10px;
 }
+.products input{
+	margin-top:2px;
+	margin-bottom:2px;
+}
+
+@media (min-width: 908px) and (max-width: 910px){
+body{
+	width: 890px;
+}
+.container {
+	width: 100%;
+}
+}

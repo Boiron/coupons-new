@@ -12,7 +12,8 @@ $first_name = $_POST['first_name'];
 $last_name = $_POST['last_name'];
 $email = $_POST['email'];
 $zip = $_POST['zip'];
-if($_POST['products']){
+$products_array = $_POST['products'];
+if($products_array){
 	$products_tried = implode(", ", $_POST['products']);
 }
 else{
@@ -79,7 +80,8 @@ else{
 	$coupon_url = generate_coupon($coupon_png, $coupon_product, $coupon_upc, $hash);
 	
 	//Email PDF
-	send_email($email, $coupon_url, $coupon_png);
+	$download_url = "http://www.boironusa.com/download-coupon/?id=" . $hash;
+	send_email($email, $download_url, $coupon_png);
 	
 	//Subscribe to Mailchimp list if they opted in
 	if($newsletter == '1'){
@@ -92,10 +94,24 @@ else{
 		$merge_vars = Array( 
 			'FNAME' => $first_name, 
 			'LNAME' => $last_name,
-			'MMERGE5' => $zip,
-			'MMERGE7' => $coupon_type,
-			'MMERGE16' => $coupon_desc
+			'ZIP' => $zip,
+			'FROM' => $coupon_type,
+			'COUPON' => $coupon_desc,
+			'PRODUCTS' => $products_tried
 		);
+		foreach($products_array as $product){
+			
+			if($product == "Children\'s Chestal"){
+				$product_name = "CCHESTAL";
+			}
+			else if($product == "Blue Tubes"){
+				$product_name = "BLUETUBES";
+			}
+			else {
+				$product_name = strtoupper($product);
+			}
+			$merge_vars[$product_name] = 'Yes';
+		}
 		$retval = $api->listSubscribe( $listId, $my_email, $merge_vars, $double_optin, $send_welcome);
 	}
 		

@@ -19,6 +19,7 @@ if($row = $stmt->fetch()){
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
+	$side_img = $row['side_img'];
 }
 //If coupon not found
 else {
@@ -49,14 +50,14 @@ else {
         </div>
         
         <div class="row">
-            <div class="col-lg-8">
+            <div class="col-sm-8">
                 <form role="form" action="form_submit.php" method="post" class="couponForm">
                 	<div class="row">
-                        <div class="form-group col-sm-4">
+                        <div class="form-group col-sm-5 col-md-4">
                             <label for="inputFirstName">First Name</label>
                             <input type="text" class="form-control" id="inputFirstName" name="first_name" placeholder="First Name">
                         </div><!-- form-group -->
-                        <div class="form-group col-sm-5">
+                        <div class="form-group col-sm-6 col-md-5">
                             <label for="inputLastName">Last Name</label>
                             <input type="text" class="form-control" id="inputLastName" name="last_name" placeholder="Last Name">
                         </div><!-- form-group -->
@@ -77,15 +78,15 @@ else {
                     	<div class="col-lg-12">
                         	<label>Which Boiron products have you tried?</label>
                         </div>
-                        <div class="form-group col-lg-12">
-                        	<div class="col-sm-5">
+                        <div class="form-group col-sm-12">
+                        	<div class="col-sm-5" class="products">
                                 <input type="checkbox" value="Arnicare" name="products[]"> Arnicare<br>
                                 <input type="checkbox" value="Calendula" name="products[]"> Calendula<br>
                                 <input type="checkbox" value="Camilia" name="products[]"> Camilia<br>
                                 <input type="checkbox" value="Chestal" name="products[]"> Chestal<br>
                                 <input type="checkbox" value="Children's Chestal" name="products[]"> Children's Chestal<br>
                             </div>
-                            <div class="col-sm-5">
+                            <div class="col-sm-5"  class="products">
                                 <input type="checkbox" value="Coldcalm" name="products[]"> Coldcalm<br>
                                 <input type="checkbox" value="Oscillo" name="products[]"> Oscillo<br>
                                 <input type="checkbox" value="Blue Tubes" name="products[]"> Blue Tubes<br>
@@ -100,10 +101,19 @@ else {
                     <input type="hidden" name="coupon_id" value="<? echo $coupon_id; ?>">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
-            </div><!-- col-md-6 -->
+                <hr>
+                <p style="font-size:70%">
+                	<strong>Privacy Policy</strong><br>
+                    We respect your privacy. We will not sell or rent personally identifiable information provided on this survey to any third party for any purpose. All of the information we collect through the survey is used solely for our internal purposes. View our <a href="http://www.arnicare.com/privacy" target="_top">Privacy Policy</a> for more details.<br>
+                    <strong>Type: </strong><? echo $coupon_type; ?>
+       			</p>
+            </div><!-- col-lg-8 -->
+            <div class="col-sm-4 hidden-xs">
+            	<img class="img-responsive" src="<? echo $side_img ?>" alt="">
+            </div>
 		</div><!-- row -->
-        <div class="row" style="color:white;">
-        	<br><br><br><br>
+        <div class="row" style="display:none; color:white;">
+            <h4>Debug Info:</h4>
             <strong>Type: </strong> <? echo $coupon_type; ?><br>
             <strong>Product: </strong> <? echo $coupon_product; ?><br>
             <strong>Description: </strong> <? echo $coupon_desc; ?><br>
@@ -142,7 +152,7 @@ else {
 							message: 'Email address is required.'
 						},
 						emailAddress: {
-							message: 'The input is not a valid email address.'
+							message: 'This is not a valid email address.'
 						}
 					}
 				},
