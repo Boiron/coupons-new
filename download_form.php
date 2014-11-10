@@ -19,7 +19,8 @@ if($row = $stmt->fetch()){
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
-	$side_img = $row['side_img'];
+	$coupon_code = $row['code'];
+	$side_img = "/coupon/img/side/" . $row['side_img'];
 }
 //If coupon not found
 else {
@@ -74,7 +75,7 @@ else {
                             <input type="text" class="form-control" id="inputZip" name="zip" placeholder="Zip Code">
                     	</div><!-- form-group -->
                     </div><!-- row -->
-                    <div class="row">
+                    <div class="row hidden-xs">
                     	<div class="col-lg-12">
                         	<label>Which Boiron products have you tried?</label>
                         </div>
@@ -105,19 +106,13 @@ else {
                 <p style="font-size:70%">
                 	<strong>Privacy Policy</strong><br>
                     We respect your privacy. We will not sell or rent personally identifiable information provided on this survey to any third party for any purpose. All of the information we collect through the survey is used solely for our internal purposes. View our <a href="http://www.arnicare.com/privacy" target="_top">Privacy Policy</a> for more details.<br>
-                    <strong>Type: </strong><? echo $coupon_type; ?>
+                    <strong><? echo $coupon_code; ?></strong>
        			</p>
             </div><!-- col-lg-8 -->
             <div class="col-sm-4 hidden-xs">
             	<img class="img-responsive" src="<? echo $side_img ?>" alt="">
             </div>
 		</div><!-- row -->
-        <div class="row" style="display:none; color:white;">
-            <h4>Debug Info:</h4>
-            <strong>Type: </strong> <? echo $coupon_type; ?><br>
-            <strong>Product: </strong> <? echo $coupon_product; ?><br>
-            <strong>Description: </strong> <? echo $coupon_desc; ?><br>
-        </div><!-- row -->
     </div><!-- container -->
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>

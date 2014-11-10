@@ -52,16 +52,17 @@ class PDF_Dash extends FPDF
 }
 
 
-//Generate the coupon PDF which will expire in 15 days. Returns the new filename.
-function generate_coupon($png, $product, $upc, $hash){
+//Generate the coupon PDF which will expire in 5 days. Returns the new filename.
+function generate_coupon($img, $product, $upc, $hash, $retailers){
 	$web = $_SERVER['HTTP_HOST'];
 	// Create Filename
-	$input_path = '/home/busaweb/public_html/coupon/png/' . $png;
+	$retailers = '/home/busaweb/public_html/coupon/img/retailers/' . $retailers;
+	$input_path = '/home/busaweb/public_html/coupon/img/' . $img;
 	$output_file = $product . '-' . $upc . '-' . $hash . '.pdf';
 	$output_path = '/home/busaweb/public_html/coupon/pdf/' . $output_file;
 	// Calculate current month and set expiration date
 	$currentDate = date("F j, Y"); // current date
-	$futuredate = strtotime(date("Y-m-d", strtotime($currentDate)) . " +15 days");
+	$futuredate = strtotime(date("Y-m-d", strtotime($currentDate)) . " +5 days");
 	$expdate = "Source: $web  | Downloaded on: $currentDate | Expiration date: " . date("F j, Y", $futuredate);
 	$expired = "Expires: " . date("F j, Y", $futuredate);
 	
@@ -85,7 +86,8 @@ function generate_coupon($png, $product, $upc, $hash){
 	$pdf->SetLineWidth(0.6);
 	$pdf->SetDash(2,2); //restores no dash
 	$pdf->Line(0,130,500,130);
-	$pdf->Image('http://www.boironcalendula.com/coupons/calendula-chains.jpg');
+	
+	$pdf->Image($retailers);
 	$pdf->Output($output_path, F);
 	
 	return 'http://www.boironusa.com/coupon/pdf/' . $output_file;

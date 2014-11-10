@@ -14,7 +14,7 @@ $stmt->execute();
 if($row = $stmt->fetch()){
 	$coupon_id = $row['coupon_id'];
 	$coupon_date = $row['date'];
-	$coupon_exp = strtotime(date("Y-m-d", strtotime($coupon_date)) . " +15 days");
+	$coupon_exp = strtotime(date("Y-m-d", strtotime($coupon_date)) . " +5 days");
 	//Check to see if coupon is expired.
 	if($currentDate > $coupon_exp){
 		die_with_error("This coupon has expired.");
@@ -36,8 +36,8 @@ if($row = $stmt->fetch()){
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
-	$coupon_img = "http://www.boironusa.com/coupon/png/" . $row['png'];
-	//$side_img = $row['side_img'];
+	$coupon_img = "http://www.boironusa.com/coupon/img/small/" . $row['img'];
+	$small_img = substr_replace($coupon_img, '-sm.jpg', -4);
 	$pixel1 = $row['pixel1'];
 	$pixel2 = $row['pixel2'];
 }
@@ -60,25 +60,32 @@ $stmt->closeCursor();
 <body>
 	<div class="container">
     	<div class="row">
-        	<div class="well">
-            	<p>Click on the coupon below to download and print. To find a retailer near you, use our store locator.</p>
+        	<div class="well text-center">
+            	<p>Click on the coupon below to download and print. To find a retailer near you, use our <a href="http://www.boironusa.com/wheretobuy/retailers/" target="_parent">store locator.</a></p>
             </div>
-            <div class="col-sm-8 center-block">
+            <div class="col-sm-12 text-center">
             	<h3><? echo $coupon_desc; ?></h3>
                 <a href="<? echo $coupon_url; ?>" target="_blank">
-                    <img align="center" alt="<? echo $coupon_desc; ?>" src="<? echo $coupon_img; ?>" width="" style="max-width: 300px;">
+                    <img align="center" alt="<? echo $coupon_desc; ?>" src="<? echo $small_img; ?>" width="" style="max-width: 300px;">
                 </a>
             </div>
         </div><!-- row -->
+        <div class="row">
+            <div class="col-sm-12 text-center" style="margin-top:75px;">
+            	<a href="http://www.boironusa.com/app" target="_blank">
+                <img src="http://www.boironusa.com/app/banners/600x300-3Taps.jpg" alt="">
+                </a>
+            </div>
+        </div>
     </div><!-- container -->
-    <? 
-	if($pixel1){
-		echo $pixel1;
-	}
-	if($pixel2){
-		echo $pixel2;
+    <!-------- BEGIN CONVERSION PIXELS --------->
+    <?
+	$pixels = $db->query("SELECT `pixel` FROM `dev_coupons_pixels` WHERE `coupon_id`=$coupon_id");
+	foreach ($pixels as $row) {
+		echo $row['pixel'];
 	}
 	?>
+    <!-------- END CONVERSION PIXELS --------->
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>

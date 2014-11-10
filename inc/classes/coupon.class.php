@@ -6,17 +6,17 @@ class Coupon {
 	public $desc;
 	public $dateCreated;
 	public $dateExp;
-	public $png;
+	public $img;
 	public $upc;
 	
-	function __construct($id, $type, $product, $desc, $dateCreated, $dateExp, $png, $upc){
+	function __construct($id, $type, $product, $desc, $dateCreated, $dateExp, $img, $upc){
 		$this->setId($id);
 		$this->setType($type);
 		$this->setProduct($product);
 		$this->setDesc($desc);
 		$this->setDateCreated($dateCreated);
 		$this->setDateExp($dateExp);
-		$this->setPng($png);
+		$this->setImg($img);
 		$this->setUpc($upc);
 		//$this->firstName = $firstName;
 		//$this->lastName = $lastName;
@@ -71,12 +71,12 @@ class Coupon {
 		return $this->dateExp;
 	}
 	
-	function setPng($newval){
-		$this->png = $newval;
+	function setImg($newval){
+		$this->img = $newval;
 	}
 	
-	function getPng(){
-		return $this->png;
+	function getImg(){
+		return $this->img;
 	}
 	
 	function setUpc($newval){

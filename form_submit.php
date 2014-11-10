@@ -25,9 +25,9 @@ if ($_POST['newsletter']){
 	$newsletter = NULL;
 }
 
-//Find out coupon expiration date (15 days from now)
+//Find out coupon expiration date (5 days from now)
 $currentDate = date("F j, Y"); // current date
-$exp_date = strtotime(date("Y-m-d", strtotime($currentDate)) . " +15 days");
+$exp_date = strtotime(date("Y-m-d", strtotime($currentDate)) . " +5 days");
 //Create unique hash using coupon id and exp date
 $hash = md5($coupon_id . $exp_date);
 $hash = substr($hash, -6);
@@ -47,17 +47,19 @@ if($row = $stmt->fetch()){
 		$row['desc'], 
 		$row['date_created'], 
 		$row['date_exp'], 
-		$row['png'], 
+		$row['img'], 
 		$row['upc']);
 	*/
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
-	$coupon_png = $row['png'];
-	if(!$coupon_png){
-		die_with_error("Coupon PNG File Not Found.");
+	$coupon_img = $row['img'];
+	if(!$coupon_img){
+		die_with_error("Coupon Image File Not Found.");
 	}
 	$coupon_upc = substr($row['upc'], -5);
+	$side_img = $row['side_img'];
+	$coupon_site = $row['site'];
 }
 //If coupon not found
 else {
@@ -77,11 +79,12 @@ if($row = $stmt->fetch()){
 //Else, store in `coupons_downloaded`, send email, and show verification message
 else{
 	//Generate coupon PDF file
-	$coupon_url = generate_coupon($coupon_png, $coupon_product, $coupon_upc, $hash);
+	$retailers = get_retailers($db, $coupon_product);
+	$coupon_url = generate_coupon($coupon_img, $coupon_product, $coupon_upc, $hash, $retailers);
 	
 	//Email PDF
-	$download_url = "http://www.boironusa.com/download-coupon/?id=" . $hash;
-	send_email($email, $download_url, $coupon_png);
+	$download_url = "http://www." . $coupon_site . ".com/download-coupon/?id=" . $hash;
+	send_email($email, $download_url, $coupon_img);
 	
 	//Subscribe to Mailchimp list if they opted in
 	if($newsletter == '1'){
@@ -144,6 +147,14 @@ else{
 	"<strong>Unique Hash: </strong>" . $hash . "<br>";
 	//var_dump($coupon);
 	//echo $retval;
+	
+	//GET TOTAL COUPON DOWNLOAD COUNT
+	$sql = "SELECT count(*) FROM `dev_coupons_downloaded` WHERE coupon_id = $coupon_id"; 
+	$result = $db->prepare($sql); 
+	$result->execute(); 
+	$count = $result->fetchColumn();
+	$notif_subject = $coupon_product . 'Coupon  - ' . $coupon_type . ' [#' . $count . ']';
+	send_notification_email($debug, $notif_subject);
 	die_with_success($email, $debug);
 }
 ?>
