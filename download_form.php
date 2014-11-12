@@ -42,7 +42,9 @@ else {
 	<div class="container">
     	<div class="row">
         	<div class="col-lg-8">
+            	<!--
                 <h1>Coupon Download Form</h1>
+                -->
 				<h3><? echo $coupon_desc ?></h3>
                 <br>
                 <em>Fill out the form below to have the coupon emailed to you.</em>

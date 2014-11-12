@@ -22,23 +22,24 @@ function die_with_success($email, $debug) {
 	header('Location: success.php?email=' . $email);
 }
 
-function send_email($email, $coupon_url, $img){
+function send_email($coupon, $coupon_url){
 	// Email From
 	$email_from = "coupons@boironusa.com";
 	
 	// Email To
-	$email_to = $email;
+	$email_to = $coupon->email;
 	
 	// Email Subject
 	$email_subject = "The Boiron Coupon You Requested";
 	
+	//Add UTM string to Coupon URL
+	$coupon_url = $coupon_url . $coupon->utmString;
+	
 	// Email Message
-	// This is an HTML formatted message	
-	$small_img = "http://www.boironusa.com/coupon/img/small/" . $img;
-	$small_img = substr_replace($small_img, '-sm.jpg', -4);
+	// This is an HTML formatted message
 	$email_html_msg = file_get_contents('email_templates/BoironCoupons.html', true);
 	$email_html_msg = str_replace("*|COUPON-PDF|*", $coupon_url, $email_html_msg);
-	$email_html_msg = str_replace("*|COUPON-IMG|*", $small_img, $email_html_msg);
+	$email_html_msg = str_replace("*|COUPON-IMG|*", $coupon->smallImg, $email_html_msg);
 	// This is a plain text formatted message
 	$email_plain_msg = "Click the link below to download your coupon:\r\n";
 	$email_plain_msg .= $coupon_url;
@@ -81,14 +82,27 @@ function send_email($email, $coupon_url, $img){
 	}
 }
 
-function send_notification_email($msg, $subject){
+function send_notification_email($coupon, $subject){
 	$email_from = "coupons@boironusa.com";
-	$email_to = "web@boironusa.com";
+	$email_to = "sharaf.atakhanov@boiron.com";
+	//$email_to = "dominick.travis@boiron.com";
 	$email_subject = $subject;
 	
 	// Email Message
 	// This is an HTML formatted message
-	$email_html_msg = $msg;
+	$email_html_msg = file_get_contents('email_templates/notification.html', true);
+	$email_html_msg = str_replace("*|HEADER|*", $subject, $email_html_msg);
+	$email_html_msg = str_replace("*|COUPON-ID|*", $coupon->id, $email_html_msg);
+	$email_html_msg = str_replace("*|TYPE|*", $coupon->type, $email_html_msg);
+	$email_html_msg = str_replace("*|PRODUCT|*", $coupon->product, $email_html_msg);
+	$email_html_msg = str_replace("*|DESC|*", $coupon->desc, $email_html_msg);
+	$email_html_msg = str_replace("*|FIRST-NAME|*", $coupon->first_name, $email_html_msg);
+	$email_html_msg = str_replace("*|LAST-NAME|*", $coupon->last_name, $email_html_msg);
+	$email_html_msg = str_replace("*|EMAIL|*", $coupon->email, $email_html_msg);
+	$email_html_msg = str_replace("*|ZIPCODE|*", $coupon->zip, $email_html_msg);
+	$email_html_msg = str_replace("*|PRODUCTS|*", stripslashes($coupon->products), $email_html_msg);
+	$email_html_msg = str_replace("*|NEWSLETTER|*", $coupon->newsletter, $email_html_msg);
+	
 	
 	// start setting up the email header
 	$headers = "From: ".$email_from;

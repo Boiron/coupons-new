@@ -40,6 +40,9 @@ if($row = $stmt->fetch()){
 	$small_img = substr_replace($coupon_img, '-sm.jpg', -4);
 	$pixel1 = $row['pixel1'];
 	$pixel2 = $row['pixel2'];
+	$coupon_upc = substr($row['upc'], -5);
+	$coupon_dollars = substr($row['desc'], 0, 2);
+	$coupon_site = $row['site'];
 }
 //If coupon not found
 else {
@@ -65,7 +68,7 @@ $stmt->closeCursor();
             </div>
             <div class="col-sm-12 text-center">
             	<h3><? echo $coupon_desc; ?></h3>
-                <a href="<? echo $coupon_url; ?>" target="_blank">
+                <a href="<? echo $coupon_url; ?>" target="_blank" class="couponLink">
                     <img align="center" alt="<? echo $coupon_desc; ?>" src="<? echo $small_img; ?>" width="" style="max-width: 300px;">
                 </a>
             </div>
@@ -86,8 +89,31 @@ $stmt->closeCursor();
 	}
 	?>
     <!-------- END CONVERSION PIXELS --------->
+    <!-- Google Analytics -->
+    <?
+	$trackingcode = $db->query("SELECT `tracking` FROM `dev_coupons_ga` WHERE `site`='$coupon_site'");
+	foreach ($trackingcode as $row) {
+		$gacode = $row['tracking'];
+	}
+	?>
+	<script async src='//www.google-analytics.com/analytics.js'></script>
+    <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', '<? echo $gacode; ?>', 'auto');
+    </script>
+    <!-- End Google Analytics -->
     <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+		$('.couponLink').click(function() {
+			ga('send', {
+			  'hitType': 'event',          // Required.
+			  'eventCategory': '<? echo $coupon_type ?> Coupon Download',   // Required.
+			  'eventAction': 'Print <? echo $coupon_desc; ?>',      // Required.
+			  'eventLabel': '<? echo $coupon_dollars . ' Coupon: ' . $coupon_upc; ?>'
+			});
+		});
+	</script>
 </body>
 </html>
 

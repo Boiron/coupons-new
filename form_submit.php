@@ -1,7 +1,8 @@
 <?
+require('inc/classes/coupon.class.php');
 require('inc/func.php');
 require('inc/generate_coupon.php');
-require('inc/classes/coupon.class.php');
+
 
 //MailChimp
 require_once 'inc/MCAPI.class.php';
@@ -40,7 +41,6 @@ $stmt->bindParam(':id', $coupon_id);
 $stmt->execute();
 //If coupon found
 if($row = $stmt->fetch()){
-	/*
 	$coupon = new Coupon($coupon_id, 
 		$row['type'], 
 		$row['product'], 
@@ -48,8 +48,18 @@ if($row = $stmt->fetch()){
 		$row['date_created'], 
 		$row['date_exp'], 
 		$row['img'], 
-		$row['upc']);
-	*/
+		$row['upc'],
+		$row['medium']);
+	$coupon->first_name = $first_name;
+	$coupon->last_name = $last_name;
+	$coupon->email = $email;
+	$coupon->zip = $zip;
+	$coupon->products = $products_tried;
+	if($newsletter == 1)
+		$coupon->newsletter = 'Yes';
+	else
+		$coupon->newsletter = 'No';
+	
 	$coupon_type = $row['type'];
 	$coupon_product = $row['product'];
 	$coupon_desc = $row['desc'];
@@ -84,7 +94,7 @@ else{
 	
 	//Email PDF
 	$download_url = "http://www." . $coupon_site . ".com/download-coupon/?id=" . $hash;
-	send_email($email, $download_url, $coupon_img);
+	send_email($coupon, $download_url);
 	
 	//Subscribe to Mailchimp list if they opted in
 	if($newsletter == '1'){
@@ -132,19 +142,6 @@ else{
 	$stmt->bindParam(':coupon_url', $coupon_url);
 	$stmt->execute();
 	
-	//Send to success page
-	$debug = "<strong>Coupon ID: </strong>" . $coupon_id . "<br>" . 
-	"<strong>Type: </strong>" . $coupon_type . "<br>" .
-    "<strong>Product: </strong>" . $coupon_product. "<br>" .
-    "<strong>Description: </strong>" . $coupon_desc. "<br>" .
-	"<strong>First Name: </strong>" . $first_name . "<br>" . 
-	"<strong>Last Name: </strong>" . $last_name . "<br>" . 
-	"<strong>Email: </strong>" . $email . "<br>". 
-	"<strong>Zip: </strong>" . $zip . "<br>" . 
-	"<strong>Products Tried: </strong>" . $products_tried . "<br>" .
-	"<strong>Newsletter: </strong>" . $newsletter . "<br>" .
-	"<strong>IP Address: </strong>" . $ip_address . "<br>" . 
-	"<strong>Unique Hash: </strong>" . $hash . "<br>";
 	//var_dump($coupon);
 	//echo $retval;
 	
@@ -153,8 +150,8 @@ else{
 	$result = $db->prepare($sql); 
 	$result->execute(); 
 	$count = $result->fetchColumn();
-	$notif_subject = $coupon_product . 'Coupon  - ' . $coupon_type . ' [#' . $count . ']';
-	send_notification_email($debug, $notif_subject);
+	$notif_subject = $coupon->product . ' Coupon - ' . $coupon_type . ' [#' . $count . ']';
+	send_notification_email($coupon, $notif_subject);
 	die_with_success($email, $debug);
 }
 ?>

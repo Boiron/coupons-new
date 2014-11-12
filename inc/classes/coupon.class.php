@@ -1,5 +1,6 @@
 <?
 class Coupon {
+	//Set Properly
 	public $id;
 	public $type;
 	public $product;
@@ -8,8 +9,24 @@ class Coupon {
 	public $dateExp;
 	public $img;
 	public $upc;
+	public $utmMedium;
 	
-	function __construct($id, $type, $product, $desc, $dateCreated, $dateExp, $img, $upc){
+	//Set improperly
+	public $first_name;
+	public $last_name;
+	public $zip;
+	public $products;
+	public $newsletter;
+	
+	//Generated
+	public $small_img;
+	public $upcFull;
+	public $utmSource;
+	public $utmContent;
+	public $utmCampaign;
+	public $utmString;
+	
+	function __construct($id, $type, $product, $desc, $dateCreated, $dateExp, $img, $upc, $medium){
 		$this->setId($id);
 		$this->setType($type);
 		$this->setProduct($product);
@@ -18,9 +35,10 @@ class Coupon {
 		$this->setDateExp($dateExp);
 		$this->setImg($img);
 		$this->setUpc($upc);
-		//$this->firstName = $firstName;
-		//$this->lastName = $lastName;
-		//$this->email = $email;
+		$this->setUtmMedium($medium);
+		$this->utmContent = $this->desc . " " . $this->upcFull;
+		$this->utmCampaign = $this->product . " " . $this->type . " Campaign";
+		$this->setUtmString();
 	}
 	
 	function setId($newval){
@@ -33,6 +51,7 @@ class Coupon {
 	
 	function setType($newval){
 		$this->type = $newval;
+		$this->utmSource = $newval;
 	}
 	
 	function getType(){
@@ -73,17 +92,35 @@ class Coupon {
 	
 	function setImg($newval){
 		$this->img = $newval;
+		$this->smallImg = substr_replace("http://www.boironusa.com/coupon/img/small/" . $newval, '-sm.jpg', -4);
 	}
 	
 	function getImg(){
 		return $this->img;
 	}
-	
+		
 	function setUpc($newval){
+		$this->upcFull = $newval;
 		$this->upc = substr($newval, -5);
 	}
 	
 	function getUpc(){
 		return $this->upc;
+	}
+	
+	function setUtmMedium($newval){
+		$this->utmMedium = $newval;
+	}
+	
+	function getUtmMedium(){
+		return $this->utmMedium;
+	}
+	
+	function setUtmString(){
+		$utmString = "&utm_source=" . $this->utmSource;
+		$utmString .= "&utm_medium=". $this->utmMedium;
+		$utmString .= "&utm_content=" . urlencode($this->utmContent);
+		$utmString .= "&utm_campaign=" . $this->utmCampaign;
+		$this->utmString = $utmString;
 	}
 }

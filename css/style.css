@@ -3,7 +3,8 @@ h1 {
 }
 h3 {
 	margin-top:0px;
-	color:#FF9900;
+	/*color:#FF9900;*/
+	color: #0066CC;
 }
 .form-control-feedback {
 	right: 10px;
@@ -12,12 +13,18 @@ h3 {
 	margin-top:2px;
 	margin-bottom:2px;
 }
+@media (min-width: 768px) {
+}
 
-@media (min-width: 908px) and (max-width: 910px){
-body{
-	width: 890px;
-}
-.container {
-	width: 100%;
-}
+@media (min-width: 870px) and (max-width: 890px){
+	body{
+		width: 850px;
+	}
+	.container {
+		width: 100%;
+		padding-right: 0 !important;
+		padding-left: 0 !important;
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
 }
