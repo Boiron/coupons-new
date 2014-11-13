@@ -88,6 +88,9 @@ if($row = $stmt->fetch()){
 
 //Else, store in `coupons_downloaded`, send email, and show verification message
 else{
+	//MailChimp API Key
+	$apikey = 'd71aef15a5934aa73398f6a7332e1c93-us8';
+	$api = new MCAPI($apikey);
 	//Generate coupon PDF file
 	$retailers = get_retailers($db, $coupon_product);
 	$coupon_url = generate_coupon($coupon_img, $coupon_product, $coupon_upc, $hash, $retailers);
@@ -98,12 +101,11 @@ else{
 	
 	//Subscribe to Mailchimp list if they opted in
 	if($newsletter == '1'){
-		$apikey = 'd71aef15a5934aa73398f6a7332e1c93-us8'; 
 		$listId = 'c2e06c10bc'; 
 		$my_email = $email;
 		$double_optin = false; 
 		$send_welcome = false;  
-		$api = new MCAPI($apikey);  
+		//$api = new MCAPI($apikey);  
 		$merge_vars = Array( 
 			'FNAME' => $first_name, 
 			'LNAME' => $last_name,
@@ -126,6 +128,7 @@ else{
 			$merge_vars[$product_name] = 'Yes';
 		}
 		$retval = $api->listSubscribe( $listId, $my_email, $merge_vars, $double_optin, $send_welcome);
+		
 	}
 		
 	//Store record in the DB
@@ -140,10 +143,9 @@ else{
 	$stmt->bindParam(':ip_address', $ip_address);
 	$stmt->bindParam(':hash', $hash);
 	$stmt->bindParam(':coupon_url', $coupon_url);
-	$stmt->execute();
+	//$stmt->execute();
 	
 	//var_dump($coupon);
-	//echo $retval;
 	
 	//GET TOTAL COUPON DOWNLOAD COUNT
 	$sql = "SELECT count(*) FROM `dev_coupons_downloaded` WHERE coupon_id = $coupon_id"; 
@@ -151,14 +153,27 @@ else{
 	$result->execute(); 
 	$count = $result->fetchColumn();
 	$notif_subject = $coupon->product . ' Coupon - ' . $coupon_type . ' [#' . $count . ']';
-	send_notification_email($coupon, $notif_subject);
+	//send_notification_email($coupon, $notif_subject);
 	
 	//If newsletter coupon then send directly to download page
 	if($coupon_type == 'Newsletter'){
-		header("Location: http://www.boironusa.com/coupon/download_page.php?id=" . $hash);
+		$listId = 'c0815969fa';
+		$retval = $api->listMemberInfo( $listId, array($email) );
+		if($retval['success'] > 0){
+			//Store Record in DB
+			$stmt->execute();
+			send_notification_email($coupon, $notif_subject);
+			header("Location: http://www.boironusa.com/coupon/download_page.php?id=" . $hash);
+		}
+		else {
+			die_with_error("Invalid email address.");
+		}
 	}
 	//Otherwise email them the coupon
 	else{
+		//Store Record in DB
+		$stmt->execute();
+		send_notification_email($coupon, $notif_subject);
 		send_email($coupon, $download_url);	
 		die_with_success($email, $debug);
 	}

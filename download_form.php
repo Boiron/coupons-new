@@ -22,8 +22,13 @@ if($row = $stmt->fetch()){
 	$coupon_desc = $row['desc'];
 	$coupon_code = $row['code'];
 	$side_img = "/coupon/img/side/" . $row['side_img'];
+	//If the coupon type is Newsletter
 	if($coupon_type == 'Newsletter'){
 		$email = $_GET['email'];
+		$firstname = $_GET['firstname'];
+		$lastname = $_GET['lastname'];
+		$zip = $_GET['zip'];
+		//Check to see if email is empty
 		if($email == ''){
 			die_with_error("Email address not found.");
 		}
@@ -69,11 +74,11 @@ else {
                 	<div class="row <? if($hideName){ echo 'hidden'; } ?>">
                         <div class="form-group col-sm-5 col-md-4">
                             <label for="inputFirstName">First Name</label>
-                            <input type="text" class="form-control" id="inputFirstName" name="first_name" placeholder="First Name">
+                            <input type="text" class="form-control" id="inputFirstName" name="first_name" placeholder="First Name" value="<? echo $firstname ?>">
                         </div><!-- form-group -->
                         <div class="form-group col-sm-6 col-md-5">
                             <label for="inputLastName">Last Name</label>
-                            <input type="text" class="form-control" id="inputLastName" name="last_name" placeholder="Last Name">
+                            <input type="text" class="form-control" id="inputLastName" name="last_name" placeholder="Last Name" value="<? echo $lastname ?>">
                         </div><!-- form-group -->
                     </div><!-- row -->
                     <div class="row">
@@ -85,7 +90,7 @@ else {
                     <div class="row" <? if($hideZip){ echo 'hidden'; } ?>>
                     	<div class="form-group col-sm-4 col-xs-6">
                             <label for="inputZip">Zip Code</label>
-                            <input type="text" class="form-control" id="inputZip" name="zip" placeholder="Zip Code">
+                            <input type="text" class="form-control" id="inputZip" name="zip" placeholder="Zip Code" value="<? echo $zip ?>">
                     	</div><!-- form-group -->
                     </div><!-- row -->
                     <div class="row hidden-xs <? if($hideProducts){ echo 'hidden'; } ?>">
