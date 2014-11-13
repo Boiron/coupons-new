@@ -4,6 +4,7 @@ require('inc/func.php');
 // Get URL paramater
 $coupon_id = $_GET['id'];
 
+
 //Get Coupon Info From DB
 $stmt = $db->prepare("SELECT * FROM `dev_coupons` WHERE `id`=:id");
 $stmt->bindParam(':id', $coupon_id);
@@ -21,6 +22,16 @@ if($row = $stmt->fetch()){
 	$coupon_desc = $row['desc'];
 	$coupon_code = $row['code'];
 	$side_img = "/coupon/img/side/" . $row['side_img'];
+	if($coupon_type == 'Newsletter'){
+		$email = $_GET['email'];
+		if($email == ''){
+			die_with_error("Email address not found.");
+		}
+		$hideName = true;
+		$hideZip = true;
+		$hideProducts = true;
+		$hideNewsletter = true;
+	}
 }
 //If coupon not found
 else {
@@ -54,8 +65,8 @@ else {
         
         <div class="row">
             <div class="col-sm-8">
-                <form role="form" action="form_submit.php" method="post" class="couponForm">
-                	<div class="row">
+                <form role="form" action="form_submit.php<? if($newsletter == "y"){ echo '?newsletter=y'; } ?>" method="post" class="couponForm" id="formID">
+                	<div class="row <? if($hideName){ echo 'hidden'; } ?>">
                         <div class="form-group col-sm-5 col-md-4">
                             <label for="inputFirstName">First Name</label>
                             <input type="text" class="form-control" id="inputFirstName" name="first_name" placeholder="First Name">
@@ -68,16 +79,16 @@ else {
                     <div class="row">
                     	<div class="form-group col-sm-8">
                             <label for="inputEmail">Email address</label>
-                            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Enter email">
+                            <input type="email" class="form-control" id="inputEmail" name="email" placeholder="Enter email" value="<? echo $email ?>">
                         </div><!-- form-group -->
                    	</div><!-- row -->
-                    <div class="row">
+                    <div class="row" <? if($hideZip){ echo 'hidden'; } ?>>
                     	<div class="form-group col-sm-4 col-xs-6">
                             <label for="inputZip">Zip Code</label>
                             <input type="text" class="form-control" id="inputZip" name="zip" placeholder="Zip Code">
                     	</div><!-- form-group -->
                     </div><!-- row -->
-                    <div class="row hidden-xs">
+                    <div class="row hidden-xs <? if($hideProducts){ echo 'hidden'; } ?>">
                     	<div class="col-lg-12">
                         	<label>Which Boiron products have you tried?</label>
                         </div>
@@ -97,7 +108,7 @@ else {
                             </div>
                         </div><!-- form-group -->
                     </div><!-- row -->
-                    <div class="form-group">
+                    <div class="form-group <? if($hideNewsletter){ echo 'hidden'; } ?>">
                         <label for="inputNewsletter">Boiron special offers and coupons</label><br>
                         <input type="checkbox" id="inputNewsletter" name="newsletter" value="Y"> Please send me valuable coupons, specials & updates by email.
                     </div><!-- form-group -->
@@ -121,6 +132,12 @@ else {
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/js/bootstrapValidator.min.js"></script>
     <script type="text/javascript">
 	$(document).ready(function() {
+		//If email is pre-populated, submit the form
+		if($('#inputEmail').val()!=''){
+			console.log("Email Is Pre-populated");
+			$('.container').addClass('hidden');
+			$('#formID').submit();
+		}
 		$('.couponForm').bootstrapValidator({
 			message: 'This value is not valid',
 			feedbackIcons: {

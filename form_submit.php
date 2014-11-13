@@ -94,7 +94,7 @@ else{
 	
 	//Email PDF
 	$download_url = "http://www." . $coupon_site . ".com/download-coupon/?id=" . $hash;
-	send_email($coupon, $download_url);
+	//send_email($coupon, $download_url);
 	
 	//Subscribe to Mailchimp list if they opted in
 	if($newsletter == '1'){
@@ -152,6 +152,15 @@ else{
 	$count = $result->fetchColumn();
 	$notif_subject = $coupon->product . ' Coupon - ' . $coupon_type . ' [#' . $count . ']';
 	send_notification_email($coupon, $notif_subject);
-	die_with_success($email, $debug);
+	
+	//If newsletter coupon then send directly to download page
+	if($coupon_type == 'Newsletter'){
+		header("Location: http://www.boironusa.com/coupon/download_page.php?id=" . $hash);
+	}
+	//Otherwise email them the coupon
+	else{
+		send_email($coupon, $download_url);	
+		die_with_success($email, $debug);
+	}
 }
 ?>
