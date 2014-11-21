@@ -2,8 +2,6 @@ h1 {
 	color: #0066CC;
 }
 h3 {
-	margin-top:0px;
-	/*color:#FF9900;*/
 	color: #0066CC;
 }
 .form-control-feedback {
@@ -16,9 +14,13 @@ h3 {
 @media (min-width: 768px) {
 }
 
-@media (min-width: 870px) and (max-width: 890px){
+@media (min-width: 870px){
+	h3 {
+		margin-top:0px;
+	}
 	body{
-		width: 850px;
+		width: 100%;
+		overflow: hidden;
 	}
 	.container {
 		width: 100%;

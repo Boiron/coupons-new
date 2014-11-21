@@ -57,7 +57,14 @@ $stmt->closeCursor();
 <meta charset="UTF-8">
 <title>Download & Print Coupon - <? echo $coupon_desc ?></title>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<!--
 <link rel="stylesheet" href="css/style.css">
+-->
+<style>
+h3 {
+	color: #0066CC;
+}
+</style>
 </head>
 
 <body>
@@ -76,7 +83,7 @@ $stmt->closeCursor();
         <div class="row">
             <div class="col-sm-12 text-center" style="margin-top:75px;">
             	<a href="http://www.boironusa.com/app" target="_blank">
-                <img src="http://www.boironusa.com/app/banners/600x300-3Taps.jpg" alt="">
+                <img src="http://www.boironusa.com/app/banners/600x300-3Taps.jpg" alt="Boiron Medicine Finder App Contest" class="img-responsive center-block">
                 </a>
             </div>
         </div>

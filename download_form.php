@@ -37,6 +37,10 @@ if($row = $stmt->fetch()){
 		$hideProducts = true;
 		$hideNewsletter = true;
 	}
+	//If the coupon type is BMF
+	if($coupon_type == 'BMF'){
+		$hideProducts = true;
+	}
 }
 //If coupon not found
 else {
@@ -48,6 +52,7 @@ else {
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
 <title>Coupon Download Form - <? echo $coupon_desc ?></title>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/css/bootstrapValidator.min.css"/>
