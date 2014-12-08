@@ -22,8 +22,8 @@ if($row = $stmt->fetch()){
 	$coupon_desc = $row['desc'];
 	$coupon_code = $row['code'];
 	$side_img = "/coupon/img/side/" . $row['side_img'];
-	//If the coupon type is Newsletter
-	if($coupon_type == 'Newsletter'){
+	//If the coupon type is Newsletter or Autoresponder
+	if($coupon_type == 'Newsletter' || $coupon_type == 'Autoresponder'){
 		$email = $_GET['email'];
 		$firstname = $_GET['firstname'];
 		$lastname = $_GET['lastname'];

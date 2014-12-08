@@ -9,9 +9,9 @@ require_once 'inc/MCAPI.class.php';
 
 //Pull all values from POST
 $coupon_id = $_POST['coupon_id'];
-$first_name = $_POST['first_name'];
-$last_name = $_POST['last_name'];
-$email = $_POST['email'];
+$first_name = fix_case($_POST['first_name']);
+$last_name = fix_case($_POST['last_name']);
+$email = strtolower($_POST['email']);
 $zip = $_POST['zip'];
 $products_array = $_POST['products'];
 if($products_array){
@@ -82,8 +82,9 @@ $stmt->bindParam(':email', $email);
 $stmt->bindParam(':id', $coupon_id);
 $stmt->execute();
 //If person has downloaded coupon
-if($row = $stmt->fetch()){
-	die_with_error("You have already downloaded this coupon.");
+if($row = $stmt->fetch() && strpos($email, "@boiron.com") == false){
+		die_with_error('You have already downloaded this coupon.<br>
+		If you found this page through a friend, <a href="http://www.boironusa.com/newsroom/healthwithin/" target="_parent">sign up</a> for our newsletter to get exclusive coupons just for you!');
 }
 
 //Else, store in `coupons_downloaded`, send email, and show verification message
@@ -155,19 +156,26 @@ else{
 	$notif_subject = $coupon->product . ' Coupon - ' . $coupon_type . ' [#' . $count . ']';
 	//send_notification_email($coupon, $notif_subject);
 	
-	//If newsletter coupon then send directly to download page
+	//If newsletter coupon then check to see if subscribed & send directly to download page
 	if($coupon_type == 'Newsletter'){
 		$listId = 'c0815969fa';
 		$retval = $api->listMemberInfo( $listId, array($email) );
 		if($retval['success'] > 0){
 			//Store Record in DB
 			$stmt->execute();
-			send_notification_email($coupon, $notif_subject);
+			send_notification_email($coupon, $notif_subject); 
 			header("Location: http://www.boironusa.com/coupon/download_page.php?id=" . $hash);
 		}
 		else {
 			die_with_error("Invalid email address.");
 		}
+	}
+	//If autoresponder coupon then send directly to download page
+	else if($coupon_type == 'Autoresponder'){
+		//Store Record in DB
+		$stmt->execute();
+		send_notification_email($coupon, $notif_subject); 
+		header("Location: http://www.boironusa.com/coupon/download_page.php?id=" . $hash);
 	}
 	//Otherwise email them the coupon
 	else{

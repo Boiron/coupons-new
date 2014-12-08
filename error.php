@@ -14,7 +14,7 @@ $error_msg = $_GET['msg'];
 <div class="container">
 	<div class="row" style="margin-top:30px;">
     	<div class="jumbotron">
-            <h1>Oops!</h1>
+            <h2>Whoops!</h2>
             <p><? echo $error_msg; ?></p>
             <p><button class="btn btn-primary btn-lg" href="#" role="button" onClick="window.history.back()">Go Back</button></p>
         </div>

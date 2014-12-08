@@ -40,6 +40,10 @@ function send_email($coupon, $coupon_url){
 	$email_html_msg = file_get_contents('email_templates/BoironCoupons.html', true);
 	$email_html_msg = str_replace("*|COUPON-PDF|*", $coupon_url, $email_html_msg);
 	$email_html_msg = str_replace("*|COUPON-IMG|*", $coupon->smallImg, $email_html_msg);
+	$email_html_msg = str_replace("*|EMAIL|*", $coupon->email, $email_html_msg);
+	$email_html_msg = str_replace("*|FIRSTNAME|*", $coupon->first_name, $email_html_msg);
+	$email_html_msg = str_replace("*|LASTNAME|*", $coupon->last_name, $email_html_msg);
+	$email_html_msg = str_replace("*|ZIPCODE|*", $coupon->zip, $email_html_msg);
 	// This is a plain text formatted message
 	$email_plain_msg = "Click the link below to download your coupon:\r\n";
 	$email_plain_msg .= $coupon_url;
@@ -145,8 +149,13 @@ function get_retailers($db, $product){
 	if ($retailer_img!=''){
 		return $retailer_img;
 	}
+	//Send full line reatailers if no reatiler footer image found
 	else{
-		return false;
+		return 'bluetubes.png';
 	}
+}
+
+function fix_case($string){
+	return ucwords(strtolower($string));
 }
 ?>

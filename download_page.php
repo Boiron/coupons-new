@@ -65,6 +65,14 @@ h3 {
 	color: #0066CC;
 }
 </style>
+<!-------- BEGIN CONVERSION PIXELS --------->
+<?
+$pixels = $db->query("SELECT `pixel` FROM `dev_coupons_pixels` WHERE `coupon_id`=$coupon_id");
+foreach ($pixels as $row) {
+	echo $row['pixel'];
+}
+?>
+<!-------- END CONVERSION PIXELS --------->
 </head>
 
 <body>
@@ -80,22 +88,14 @@ h3 {
                 </a>
             </div>
         </div><!-- row -->
-        <div class="row">
+        <!-- CONTEST BANNER AND LINK --><!-- <div class="row">
             <div class="col-sm-12 text-center" style="margin-top:75px;">
             	<a href="http://www.boironusa.com/app" target="_blank">
                 <img src="http://www.boironusa.com/app/banners/600x300-3Taps.jpg" alt="Boiron Medicine Finder App Contest" class="img-responsive center-block">
                 </a>
             </div>
-        </div>
+        </div> -->
     </div><!-- container -->
-    <!-------- BEGIN CONVERSION PIXELS --------->
-    <?
-	$pixels = $db->query("SELECT `pixel` FROM `dev_coupons_pixels` WHERE `coupon_id`=$coupon_id");
-	foreach ($pixels as $row) {
-		echo $row['pixel'];
-	}
-	?>
-    <!-------- END CONVERSION PIXELS --------->
     <!-- Google Analytics -->
     <?
 	$trackingcode = $db->query("SELECT `tracking` FROM `dev_coupons_ga` WHERE `site`='$coupon_site'");
